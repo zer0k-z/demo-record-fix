@@ -33,7 +33,7 @@ jobs:
 
       - name: Compile Plugins
         run: |
-          for file in kztv*.sp
+          for file in demo-record-fix*.sp
           do
             echo -e "\nCompiling $file..."
             spcomp -w234 -O2 -v2 -i include $file
@@ -46,50 +46,20 @@ jobs:
           mkdir -p $PLUGINS_PATH
           rsync -av --include='*/' --include="*.smx" --exclude="*" --prune-empty-dirs --remove-source-files $SCRIPTS_PATH/ $PLUGINS_PATH/
 
-      - name: Download extensions
-        run: |
-          wget https://nightly.link/peace-maker/sourcetvmanager/workflows/main/master
-          grep -ho 'https://nightly\.link/peace-maker/sourcetvmanager/workflows/main/master/sourcetvmanager-sm1\.10-linux-[^"]*\.zip' master | head -n1 | xargs -I{} wget {}
-          grep -ho 'https://nightly\.link/peace-maker/sourcetvmanager/workflows/main/master/sourcetvmanager-sm1\.10-win-[^"]*\.zip' master | head -n1 | xargs -I{} wget {}
-          for file in *.zip
-          do
-            unzip -o $file
-          done
-
       - name: Move folders to build
         run: |
           mkdir build
-          mv ./{addons,cfg} build/
+          mv ./addons build/
       
       - name: Remove unnecessary files and folders from build
         run: |
           rm -rf addons/sourcemod/scripting
-          rm -rf addons/sourcemod/configs/{*.cfg,*.ini}
         working-directory: ./build
 
-      - name: Rename build to build-linux and copy for build-windows
-        run: |
-          mv build build-linux
-          cp -r build-linux build-windows
-
-      - name: Delete unneeded extension files (Windows)
-        run: |
-          ls | grep -v sourcetvmanager.ext.2.csgo.dll | xargs rm
-        working-directory: ./build-windows/addons/sourcemod/extensions
-
-      - name: Delete unneeded extension files (Linux)
-        run: |
-          ls | grep -v sourcetvmanager.ext.2.csgo.so | xargs rm
-        working-directory: ./build-linux/addons/sourcemod/extensions
-      
       - name: Compress package
-        run: |
-          cd build-linux
-          zip -9rq ../kztv-linux.zip *
-          cd ..
-          cd build-windows
-          zip -9rq ../kztv-windows.zip *
-      
+        run: zip -9rq ../demo-record-fix.zip *
+        working-directory: ./build
+        
       - name: Set Commit Hash
         id: commit_info
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
@@ -101,8 +71,7 @@ jobs:
           tag_name: workflow-build${{ github.run_number }}
           name: Build ${{ steps.commit_info.outputs.sha_short  }}
           files: |
-            kztv-linux.zip
-            kztv-windows.zip
+            demo-record-fix.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
