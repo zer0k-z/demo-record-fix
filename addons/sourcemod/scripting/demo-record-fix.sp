@@ -5,6 +5,13 @@
 Handle gH_GetPlayerSlot;
 Handle gH_ExecuteStringCommand;
 
+public Plugin myinfo = {
+	name = "Demo Record Fix",
+	author = "zer0.k",
+	description = "Allows POV demo recording and fixes demo corruption",
+	version = "1.0"
+};
+
 public void OnPluginStart()
 {
     HookEvents();
@@ -58,6 +65,7 @@ void FixRecord(int client)
 
     e.FireToClient(client);
     delete e;
+    PrintToConsole(client, "Fix applied!");
 }
 
 public MRESReturn Detour_OnExecuteStringCommand_Post(Address pThis, Handle hReturn, Handle hParams)
@@ -66,11 +74,12 @@ public MRESReturn Detour_OnExecuteStringCommand_Post(Address pThis, Handle hRetu
 
     char sBuffer[512];
     DHookGetParamString(hParams, 1, sBuffer, sizeof(sBuffer));
+
+    // Typing demorestart in console triggers this as well, but that shouldn't be a problem
     if (StrEqual(sBuffer, "demorestart"))
     {
         PrintToConsole(client, "Demo recording detected, applying fix...");
         FixRecord(client);
-        PrintToConsole(client, "Fix applied!");
     }
 } 
 
