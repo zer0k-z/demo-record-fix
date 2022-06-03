@@ -36,12 +36,12 @@ public void OnPluginStart()
 	HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
 }
 
-void OnMapStart()
+public void OnMapStart()
 {
 	gB_MapRunning = true;
 }
 
-void OnMapEnd()
+public void OnMapEnd()
 {
 	gB_MapRunning = false;
 }
