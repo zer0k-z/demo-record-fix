@@ -21,6 +21,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	gB_LateLoad = late;
 	return APLRes_Success;
 }
+
 public void OnPluginStart()
 {
 	AddCommandListener(Command_Demorestart, "demorestart");
